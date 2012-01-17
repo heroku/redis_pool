@@ -113,7 +113,7 @@ handle_call(pid, _From, #state{queue=Queue}=State) ->
     end;
 
 handle_call({cycle, Opts}, _From, #state{queue=Queue}) ->
-    Size = queue:size(Queue),
+    Size = queue:len(Queue),
     [redis:stop(Pid) || Pid <- queue:to_list(Queue)],
     Workers = start_workers(Size, Opts),
     Queue1 = queue:from_list(Workers),
