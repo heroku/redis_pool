@@ -102,12 +102,12 @@ parse_host_port(Scheme, HostPort) ->
     {Host, int_port(Port)}.
     
 split_uri(UriPart, SplitChar, NoMatchResult, SkipLeft, SkipRight) ->
-    case inets_regexp:first_match(UriPart, SplitChar) of
-	{match, Match, _} ->
-	    {string:substr(UriPart, 1, Match - SkipLeft),
-	     string:substr(UriPart, Match + SkipRight, length(UriPart))}; 
-	nomatch ->
-	    NoMatchResult
+    case re:run(UriPart, SplitChar, [{capture, first}]) of
+        {match, [{Match, _}]} ->
+            {string:substr(UriPart, 1, Match + 1 - SkipLeft),
+             string:substr(UriPart, Match + 1 + SkipRight, length(UriPart))};
+        nomatch ->
+            NoMatchResult
     end.
 
 default_port(redis) ->
